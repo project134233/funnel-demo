@@ -3,88 +3,647 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Admin Config</title>
+    <title>Admin Config Tenant</title>
     <style>
+      :root {
+        --ink: #111827;
+        --muted: #4b5563;
+        --line: #dbe3f1;
+        --bg: #eef3fb;
+        --card: #ffffff;
+        --brand: #f39c12;
+        --ok: #065f46;
+        --err: #b91c1c;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
       body {
-        font-family: Arial, sans-serif;
-        margin: 24px;
-        background: #f7f8fb;
-        color: #1f2937;
+        margin: 0;
+        font-family: "Avenir Next", "Trebuchet MS", Arial, sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 8% 8%, #dbe9ff 0, rgba(219, 233, 255, 0) 40%),
+          linear-gradient(145deg, var(--bg), #e8eef8);
       }
+
+      .wrap {
+        width: min(1100px, 94vw);
+        margin: 22px auto 34px;
+      }
+
+      .hero {
+        background: linear-gradient(130deg, #132a4c, #1f3e6a 58%, #2c568e);
+        color: #fff;
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 14px 28px rgba(15, 23, 42, 0.2);
+      }
+
+      .hero h1 {
+        margin: 0;
+        font-size: clamp(22px, 3vw, 31px);
+      }
+
+      .hero p {
+        margin: 8px 0 0;
+        color: #dce7f6;
+      }
+
       .card {
-        background: #fff;
-        border: 1px solid #e5e7eb;
-        border-radius: 12px;
-        padding: 16px;
-        max-width: 1000px;
+        margin-top: 14px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
       }
-      .row {
+
+      .grid-2 {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 10px;
       }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .field {
+        display: grid;
+        gap: 4px;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: 700;
+        color: #374151;
+      }
+
       input,
-      button,
-      textarea {
-        width: 100%;
-        box-sizing: border-box;
-        border-radius: 8px;
-        border: 1px solid #d1d5db;
-        padding: 8px;
-        font-size: 14px;
-      }
+      textarea,
       button {
-        background: #f39c12;
-        color: #fff;
-        border: 0;
-        cursor: pointer;
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #ccd6e6;
+        font-size: 14px;
+        font-family: inherit;
       }
+
+      input,
       textarea {
-        min-height: 520px;
-        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        padding: 9px 10px;
+        color: #111827;
+        background: #fff;
       }
+
+      input:focus,
+      textarea:focus {
+        outline: none;
+        border-color: #8da6c8;
+        box-shadow: 0 0 0 3px rgba(82, 117, 166, 0.14);
+      }
+
+      textarea {
+        min-height: 88px;
+        resize: vertical;
+      }
+
+      .token-row {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr auto;
+        gap: 10px;
+        align-items: end;
+      }
+
+      .btn {
+        border: 0;
+        background: linear-gradient(145deg, var(--brand), #d37f00);
+        color: #fff;
+        font-weight: 700;
+        padding: 10px 13px;
+        cursor: pointer;
+        white-space: nowrap;
+      }
+
+      .btn.secondary {
+        background: #fff;
+        color: #1f3b63;
+        border: 1px solid #bfd0e9;
+      }
+
+      .actions {
+        margin-top: 12px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .section-head {
+        margin: 2px 0 8px;
+        font-size: 16px;
+      }
+
+      .sub {
+        margin: 0 0 10px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .cars {
+        display: grid;
+        gap: 8px;
+      }
+
+      .car {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        background: #f8fbff;
+      }
+
+      .car h4 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        color: #1d3557;
+      }
+
       .status {
         margin-top: 8px;
         font-size: 13px;
       }
+
+      .status.ok {
+        color: var(--ok);
+      }
+
+      .status.err {
+        color: var(--err);
+      }
+
+      details {
+        margin-top: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f8fbff;
+      }
+
+      summary {
+        cursor: pointer;
+        list-style: none;
+        padding: 10px 12px;
+        font-weight: 700;
+      }
+
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .advanced {
+        padding: 0 12px 12px;
+      }
+
+      .json-editor {
+        min-height: 340px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .hint {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 860px) {
+        .grid-2,
+        .grid-3,
+        .token-row {
+          grid-template-columns: 1fr;
+        }
+      }
     </style>
   </head>
   <body>
-    <div class="card">
-      <h1>Admin Config Tenant</h1>
-      <p>Gestisci i JSON dei tenant. Usa il token definito in <code>.env</code>.</p>
+    <div class="wrap">
+      <section class="hero">
+        <h1>Admin Config Tenant</h1>
+        <p>
+          Editor guidato: compili i campi principali e salvi. Il JSON avanzato resta disponibile solo se serve.
+        </p>
+      </section>
 
-      <div class="row">
-        <input id="token" type="password" placeholder="Admin token" />
-        <input id="tenant" type="text" value="default" placeholder="Tenant ID" />
-      </div>
+      <section class="card">
+        <div class="token-row">
+          <div class="field">
+            <label for="token">Admin token</label>
+            <input id="token" type="password" placeholder="Token da .env" />
+          </div>
 
-      <div class="row" style="margin-top:10px;">
-        <button id="loadBtn" type="button">Carica Config</button>
-        <button id="saveBtn" type="button">Salva Config</button>
-      </div>
+          <div class="field">
+            <label for="tenant">Tenant ID</label>
+            <input id="tenant" type="text" value="default" placeholder="default" />
+          </div>
 
-      <textarea id="editor" spellcheck="false"></textarea>
-      <div class="status" id="status"></div>
+          <button id="loadBtn" class="btn" type="button">Carica Config</button>
+        </div>
+
+        <p class="hint">
+          Suggerimento: inizia da <code>default</code>, poi crea tenant separati (es. <code>cliente1</code>, <code>cliente2</code>).
+        </p>
+      </section>
+
+      <section class="card">
+        <h2 class="section-head">Branding e Messaggi</h2>
+        <p class="sub">Questi testi impattano la UI del chatbot.</p>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="brandName">Nome brand</label>
+            <input id="brandName" type="text" />
+          </div>
+          <div class="field">
+            <label for="headerTitle">Titolo chatbot</label>
+            <input id="headerTitle" type="text" />
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="field">
+            <label for="welcome">Testo descrizione (header pagina)</label>
+            <textarea id="welcome"></textarea>
+          </div>
+          <div class="field">
+            <label for="openingQuestion">Prima domanda automatica</label>
+            <textarea id="openingQuestion"></textarea>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-top:10px;">
+          <div class="field">
+            <label for="ctaLabel">Label pill CTA</label>
+            <input id="ctaLabel" type="text" />
+          </div>
+          <div class="field">
+            <label for="primaryColor">Colore primario (hex)</label>
+            <input id="primaryColor" type="text" placeholder="#f39c12" />
+          </div>
+          <div class="field">
+            <label for="accentColor">Colore accent (hex)</label>
+            <input id="accentColor" type="text" placeholder="#2c3e50" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-head">Prezzi e Impianti</h2>
+        <p class="sub">Valori numerici usati dal calcolatore.</p>
+
+        <div class="grid-3">
+          <div class="field">
+            <label for="priceHuawei">Pacchetto Huawei (EUR)</label>
+            <input id="priceHuawei" type="number" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label for="priceAiko">Pacchetto Aiko (EUR)</label>
+            <input id="priceAiko" type="number" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label for="priceSunpower">Pacchetto SunPower (EUR)</label>
+            <input id="priceSunpower" type="number" min="0" step="1" />
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-top:10px;">
+          <div class="field">
+            <label for="plant4">Produzione impianto 4kW (kWh/anno)</label>
+            <input id="plant4" type="number" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label for="plant5">Produzione impianto 5kW (kWh/anno)</label>
+            <input id="plant5" type="number" min="0" step="1" />
+          </div>
+          <div class="field">
+            <label for="plant6">Produzione impianto 6kW (kWh/anno)</label>
+            <input id="plant6" type="number" min="0" step="1" />
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-head">Modelli Auto</h2>
+        <p class="sub">Puoi modificare nome, batteria e consumo medio.</p>
+        <div id="carsWrap" class="cars"></div>
+      </section>
+
+      <section class="card">
+        <h2 class="section-head">AI e Sicurezza</h2>
+
+        <div class="grid-2">
+          <div class="field">
+            <label for="model">AI model</label>
+            <input id="model" type="text" placeholder="gpt-4.1-mini" />
+          </div>
+          <div class="field">
+            <label for="temperature">Temperature (0-1)</label>
+            <input id="temperature" type="number" min="0" max="1" step="0.1" />
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:10px;">
+          <label for="systemPrompt">System prompt</label>
+          <textarea id="systemPrompt"></textarea>
+        </div>
+
+        <div class="field" style="margin-top:10px;">
+          <label for="allowedHosts">Allowed embed hosts (uno per riga, senza https)</label>
+          <textarea id="allowedHosts" placeholder="example.com\nwww.example.com"></textarea>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="actions">
+          <button id="saveFormBtn" class="btn" type="button">Salva Config (Guidata)</button>
+          <button id="refreshJsonBtn" class="btn secondary" type="button">Aggiorna JSON da Form</button>
+        </div>
+
+        <div id="status" class="status"></div>
+
+        <details>
+          <summary>Editor JSON avanzato</summary>
+          <div class="advanced">
+            <p class="sub">Usa questa area solo per campi avanzati non presenti nel form guidato.</p>
+            <textarea id="editor" class="json-editor" spellcheck="false"></textarea>
+            <div class="actions">
+              <button id="applyJsonBtn" class="btn secondary" type="button">Carica JSON nel Form</button>
+              <button id="saveJsonBtn" class="btn" type="button">Salva JSON Avanzato</button>
+            </div>
+          </div>
+        </details>
+      </section>
     </div>
 
     <script>
-      const tokenEl = document.getElementById("token");
-      const tenantEl = document.getElementById("tenant");
-      const editorEl = document.getElementById("editor");
-      const statusEl = document.getElementById("status");
+      const els = {
+        token: document.getElementById("token"),
+        tenant: document.getElementById("tenant"),
+        loadBtn: document.getElementById("loadBtn"),
+        saveFormBtn: document.getElementById("saveFormBtn"),
+        refreshJsonBtn: document.getElementById("refreshJsonBtn"),
+        applyJsonBtn: document.getElementById("applyJsonBtn"),
+        saveJsonBtn: document.getElementById("saveJsonBtn"),
+        editor: document.getElementById("editor"),
+        status: document.getElementById("status"),
+        carsWrap: document.getElementById("carsWrap"),
+        brandName: document.getElementById("brandName"),
+        headerTitle: document.getElementById("headerTitle"),
+        welcome: document.getElementById("welcome"),
+        openingQuestion: document.getElementById("openingQuestion"),
+        ctaLabel: document.getElementById("ctaLabel"),
+        primaryColor: document.getElementById("primaryColor"),
+        accentColor: document.getElementById("accentColor"),
+        priceHuawei: document.getElementById("priceHuawei"),
+        priceAiko: document.getElementById("priceAiko"),
+        priceSunpower: document.getElementById("priceSunpower"),
+        plant4: document.getElementById("plant4"),
+        plant5: document.getElementById("plant5"),
+        plant6: document.getElementById("plant6"),
+        model: document.getElementById("model"),
+        temperature: document.getElementById("temperature"),
+        systemPrompt: document.getElementById("systemPrompt"),
+        allowedHosts: document.getElementById("allowedHosts")
+      };
 
-      function setStatus(text, error) {
-        statusEl.textContent = text;
-        statusEl.style.color = error ? "#b91c1c" : "#065f46";
+      const DEFAULTS = {
+        ui: {
+          headerTitle: "Calcolatore EV + Fotovoltaico",
+          welcome: "",
+          openingQuestion: "",
+          primaryColor: "#f39c12",
+          accentColor: "#2c3e50",
+          ctaLabel: "Analisi personalizzata"
+        },
+        options: {
+          cars: {},
+          plantOutput: { "4": 4000, "5": 5000, "6": 6000 },
+          packagePrices: { huawei: 0, aiko: 0, sunpower: 0 }
+        },
+        assistant: {
+          model: "gpt-4.1-mini",
+          temperature: 0.2,
+          systemPrompt: ""
+        },
+        security: {
+          allowedEmbedHosts: []
+        }
+      };
+
+      let currentConfig = null;
+
+      function deepClone(value) {
+        return JSON.parse(JSON.stringify(value));
+      }
+
+      function asNumber(value, fallback) {
+        const n = Number(value);
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function escapeHtml(value) {
+        return String(value || "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function setStatus(text, isError) {
+        els.status.textContent = text;
+        els.status.className = `status ${isError ? "err" : "ok"}`;
+      }
+
+      function ensureConfigShape(input) {
+        const cfg = deepClone(input || {});
+        cfg.tenantId = String(cfg.tenantId || els.tenant.value || "default");
+        cfg.brandName = String(cfg.brandName || "Consulente Fotovoltaico");
+
+        cfg.ui = { ...deepClone(DEFAULTS.ui), ...(cfg.ui || {}) };
+        cfg.options = {
+          ...deepClone(DEFAULTS.options),
+          ...(cfg.options || {}),
+          plantOutput: {
+            ...deepClone(DEFAULTS.options.plantOutput),
+            ...((cfg.options && cfg.options.plantOutput) || {})
+          },
+          packagePrices: {
+            ...deepClone(DEFAULTS.options.packagePrices),
+            ...((cfg.options && cfg.options.packagePrices) || {})
+          },
+          cars: (cfg.options && cfg.options.cars && typeof cfg.options.cars === "object") ? cfg.options.cars : {}
+        };
+
+        cfg.assistant = { ...deepClone(DEFAULTS.assistant), ...(cfg.assistant || {}) };
+        cfg.security = { ...deepClone(DEFAULTS.security), ...(cfg.security || {}) };
+
+        if (!Array.isArray(cfg.security.allowedEmbedHosts)) {
+          cfg.security.allowedEmbedHosts = [];
+        }
+
+        return cfg;
+      }
+
+      function renderCars(cars) {
+        els.carsWrap.innerHTML = "";
+
+        const entries = Object.entries(cars || {});
+        if (entries.length === 0) {
+          els.carsWrap.innerHTML = '<div class="sub">Nessun modello auto configurato.</div>';
+          return;
+        }
+
+        entries.forEach(function ([key, car]) {
+          const card = document.createElement("div");
+          card.className = "car";
+          card.dataset.carKey = key;
+
+          card.innerHTML = `
+            <h4>${key}</h4>
+            <div class="grid-3">
+              <div class="field">
+                <label>Nome</label>
+                <input type="text" data-field="nome" value="${escapeHtml(car.nome)}" />
+              </div>
+              <div class="field">
+                <label>Batteria</label>
+                <input type="text" data-field="batteria" value="${escapeHtml(car.batteria)}" />
+              </div>
+              <div class="field">
+                <label>Consumo (kWh/100km)</label>
+                <input type="number" step="0.1" min="0" data-field="consumo" value="${asNumber(car.consumo, 0)}" />
+              </div>
+            </div>
+          `;
+
+          els.carsWrap.appendChild(card);
+        });
+      }
+
+      function fillForm(config) {
+        els.brandName.value = config.brandName || "";
+        els.headerTitle.value = config.ui.headerTitle || "";
+        els.welcome.value = config.ui.welcome || "";
+        els.openingQuestion.value = config.ui.openingQuestion || "";
+        els.ctaLabel.value = config.ui.ctaLabel || "";
+        els.primaryColor.value = config.ui.primaryColor || "";
+        els.accentColor.value = config.ui.accentColor || "";
+
+        els.priceHuawei.value = asNumber(config.options.packagePrices.huawei, 0);
+        els.priceAiko.value = asNumber(config.options.packagePrices.aiko, 0);
+        els.priceSunpower.value = asNumber(config.options.packagePrices.sunpower, 0);
+
+        els.plant4.value = asNumber(config.options.plantOutput["4"], 0);
+        els.plant5.value = asNumber(config.options.plantOutput["5"], 0);
+        els.plant6.value = asNumber(config.options.plantOutput["6"], 0);
+
+        els.model.value = config.assistant.model || "";
+        els.temperature.value = asNumber(config.assistant.temperature, 0.2);
+        els.systemPrompt.value = config.assistant.systemPrompt || "";
+
+        els.allowedHosts.value = (config.security.allowedEmbedHosts || []).join("\n");
+
+        renderCars(config.options.cars);
+      }
+
+      function collectCars() {
+        const output = {};
+        const carCards = els.carsWrap.querySelectorAll(".car");
+
+        carCards.forEach(function (card) {
+          const key = card.dataset.carKey;
+          const nome = card.querySelector('[data-field="nome"]').value.trim();
+          const batteria = card.querySelector('[data-field="batteria"]').value.trim();
+          const consumo = asNumber(card.querySelector('[data-field="consumo"]').value, 0);
+
+          output[key] = {
+            nome,
+            batteria,
+            consumo
+          };
+        });
+
+        return output;
+      }
+
+      function buildConfigFromForm() {
+        const base = ensureConfigShape(currentConfig || {});
+        const cfg = deepClone(base);
+
+        cfg.tenantId = String(els.tenant.value || cfg.tenantId || "default").trim();
+        cfg.brandName = els.brandName.value.trim();
+
+        cfg.ui.headerTitle = els.headerTitle.value.trim();
+        cfg.ui.welcome = els.welcome.value.trim();
+        cfg.ui.openingQuestion = els.openingQuestion.value.trim();
+        cfg.ui.ctaLabel = els.ctaLabel.value.trim();
+        cfg.ui.primaryColor = els.primaryColor.value.trim();
+        cfg.ui.accentColor = els.accentColor.value.trim();
+
+        cfg.options.packagePrices.huawei = asNumber(els.priceHuawei.value, 0);
+        cfg.options.packagePrices.aiko = asNumber(els.priceAiko.value, 0);
+        cfg.options.packagePrices.sunpower = asNumber(els.priceSunpower.value, 0);
+
+        cfg.options.plantOutput["4"] = asNumber(els.plant4.value, 0);
+        cfg.options.plantOutput["5"] = asNumber(els.plant5.value, 0);
+        cfg.options.plantOutput["6"] = asNumber(els.plant6.value, 0);
+
+        cfg.options.cars = collectCars();
+
+        cfg.assistant.model = els.model.value.trim();
+        cfg.assistant.temperature = asNumber(els.temperature.value, 0.2);
+        cfg.assistant.systemPrompt = els.systemPrompt.value.trim();
+
+        cfg.security.allowedEmbedHosts = els.allowedHosts.value
+          .split("\n")
+          .map(function (host) {
+            return host.trim();
+          })
+          .filter(Boolean);
+
+        return cfg;
+      }
+
+      function syncJsonFromForm() {
+        const cfg = buildConfigFromForm();
+        els.editor.value = JSON.stringify(cfg, null, 2);
+      }
+
+      async function saveConfigObject(config) {
+        const tenant = encodeURIComponent(els.tenant.value || "default");
+        const response = await fetch(`/api/admin/config?tenant=${tenant}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "x-admin-token": els.token.value
+          },
+          body: JSON.stringify(config)
+        });
+
+        const payload = await response.json();
+        if (!response.ok || payload.ok === false) {
+          throw new Error(payload.error || "Errore salvataggio");
+        }
+
+        return ensureConfigShape(payload.config);
       }
 
       async function loadConfig() {
         try {
-          const tenant = encodeURIComponent(tenantEl.value || "default");
+          const tenant = encodeURIComponent(els.tenant.value || "default");
           const response = await fetch(`/api/admin/config?tenant=${tenant}`, {
             headers: {
-              "x-admin-token": tokenEl.value
+              "x-admin-token": els.token.value
             }
           });
 
@@ -93,40 +652,63 @@
             throw new Error(payload.error || "Errore caricamento");
           }
 
-          editorEl.value = JSON.stringify(payload.config, null, 2);
-          setStatus("Config caricata.", false);
+          currentConfig = ensureConfigShape(payload.config);
+          fillForm(currentConfig);
+          els.editor.value = JSON.stringify(currentConfig, null, 2);
+          setStatus("Config caricata. Ora puoi aggiornare i campi guidati e salvare.", false);
         } catch (error) {
           setStatus(error.message, true);
         }
       }
 
-      async function saveConfig() {
+      async function saveFromForm() {
         try {
-          const tenant = encodeURIComponent(tenantEl.value || "default");
-          const parsed = JSON.parse(editorEl.value);
-
-          const response = await fetch(`/api/admin/config?tenant=${tenant}`, {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              "x-admin-token": tokenEl.value
-            },
-            body: JSON.stringify(parsed)
-          });
-
-          const payload = await response.json();
-          if (!response.ok || payload.ok === false) {
-            throw new Error(payload.error || "Errore salvataggio");
-          }
-
-          setStatus("Config salvata.", false);
+          const cfg = buildConfigFromForm();
+          currentConfig = await saveConfigObject(cfg);
+          fillForm(currentConfig);
+          els.editor.value = JSON.stringify(currentConfig, null, 2);
+          setStatus("Config salvata con editor guidato.", false);
         } catch (error) {
           setStatus(error.message, true);
         }
       }
 
-      document.getElementById("loadBtn").addEventListener("click", loadConfig);
-      document.getElementById("saveBtn").addEventListener("click", saveConfig);
+      function applyJsonToForm() {
+        try {
+          const parsed = JSON.parse(els.editor.value);
+          currentConfig = ensureConfigShape(parsed);
+          fillForm(currentConfig);
+          setStatus("JSON applicato al form.", false);
+        } catch (error) {
+          setStatus(`JSON non valido: ${error.message}`, true);
+        }
+      }
+
+      async function saveFromJson() {
+        try {
+          const parsed = JSON.parse(els.editor.value);
+          const shaped = ensureConfigShape(parsed);
+          currentConfig = await saveConfigObject(shaped);
+          fillForm(currentConfig);
+          els.editor.value = JSON.stringify(currentConfig, null, 2);
+          setStatus("Config salvata con editor JSON avanzato.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      }
+
+      els.loadBtn.addEventListener("click", loadConfig);
+      els.saveFormBtn.addEventListener("click", saveFromForm);
+      els.refreshJsonBtn.addEventListener("click", function () {
+        try {
+          syncJsonFromForm();
+          setStatus("JSON aggiornato dal form guidato.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      });
+      els.applyJsonBtn.addEventListener("click", applyJsonToForm);
+      els.saveJsonBtn.addEventListener("click", saveFromJson);
     </script>
   </body>
 </html>
