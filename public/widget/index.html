@@ -7,80 +7,102 @@
     <link rel="stylesheet" href="widget.css" />
   </head>
   <body>
-    <div class="app" id="appRoot">
-      <header class="topbar">
-        <div>
-          <h1 id="headerTitle">Consulente FV</h1>
-          <p id="headerSub">Simula il risparmio EV + fotovoltaico</p>
-        </div>
-        <button id="closeBtn" class="icon-btn" type="button" aria-label="Chiudi">×</button>
-      </header>
+    <div class="page-shell">
+      <div class="bg-orb orb-a"></div>
+      <div class="bg-orb orb-b"></div>
 
-      <main id="messages" class="messages" aria-live="polite"></main>
+      <div class="standalone-wrapper">
+        <section class="branding-strip" id="brandingStrip">
+          <p class="eyebrow" id="heroBrand">Consulente Fotovoltaico</p>
+          <h1 id="heroTitle">Calcolatore EV + Fotovoltaico</h1>
+          <p id="heroInfo">
+            Simula i risparmi EV + FV in meno di un minuto e ricevi risposte immediate sui prossimi passi.
+          </p>
+          <div class="branding-meta">
+            <span class="meta-pill" id="heroPill1">Simulazione in 60 sec</span>
+            <span class="meta-pill" id="heroPill2">Risposte AI in italiano</span>
+            <span class="meta-pill" id="heroPill3">Lead pronti per il consulente</span>
+          </div>
+        </section>
 
-      <section class="quick-actions">
-        <button id="toggleCalc" class="ghost" type="button">Simula Risparmio</button>
-        <button id="toggleLead" class="ghost" type="button">Lascia Contatto</button>
-      </section>
+        <section class="chat-shell">
+          <div class="app" id="appRoot">
+            <header class="topbar">
+              <div>
+                <h2 id="headerTitle">Consulente FV</h2>
+                <p id="headerSub">Simula il risparmio EV + fotovoltaico</p>
+              </div>
+              <button id="closeBtn" class="icon-btn" type="button" aria-label="Chiudi">×</button>
+            </header>
 
-      <section id="calcPanel" class="panel hidden" aria-label="Calcolatore">
-        <h2>Calcolatore EV + FV</h2>
+            <main id="messages" class="messages" aria-live="polite"></main>
 
-        <label for="autoKey">Auto elettrica</label>
-        <select id="autoKey" required></select>
+            <section class="quick-actions">
+              <button id="toggleCalc" class="ghost" type="button">Simula Risparmio</button>
+              <button id="toggleLead" class="ghost" type="button">Lascia Contatto</button>
+            </section>
 
-        <label for="kmAnnui">Km annui</label>
-        <input id="kmAnnui" type="number" placeholder="15000" min="1" required />
+            <section id="calcPanel" class="panel hidden" aria-label="Calcolatore">
+              <h3>Calcolatore EV + FV</h3>
 
-        <label for="consumoCustom">Consumo custom (kWh/100km, opzionale)</label>
-        <input id="consumoCustom" type="number" placeholder="Lascia vuoto per stima" min="1" step="0.1" />
+              <label for="autoKey">Auto elettrica</label>
+              <select id="autoKey" required></select>
 
-        <label for="prezzoPubblico">Prezzo ricarica pubblica/rete (EUR/kWh)</label>
-        <input id="prezzoPubblico" type="number" placeholder="0.65" min="0.01" step="0.01" required />
+              <label for="kmAnnui">Km annui</label>
+              <input id="kmAnnui" type="number" placeholder="15000" min="1" required />
 
-        <label for="impianto">Impianto FV</label>
-        <select id="impianto" required></select>
+              <label for="consumoCustom">Consumo custom (kWh/100km, opzionale)</label>
+              <input id="consumoCustom" type="number" placeholder="Lascia vuoto per stima" min="1" step="0.1" />
 
-        <label for="quotaEVdaFV">Quota ricarica EV coperta da FV (%)</label>
-        <input id="quotaEVdaFV" type="number" placeholder="60" min="0" max="100" required />
+              <label for="prezzoPubblico">Prezzo ricarica pubblica/rete (EUR/kWh)</label>
+              <input id="prezzoPubblico" type="number" placeholder="0.65" min="0.01" step="0.01" required />
 
-        <label for="prezzoReteCasa">Prezzo energia casa (EUR/kWh)</label>
-        <input id="prezzoReteCasa" type="number" placeholder="0.25" min="0.01" step="0.01" required />
+              <label for="impianto">Impianto FV</label>
+              <select id="impianto" required></select>
 
-        <label for="packageKey">Pacchetto (opzionale per rientro)</label>
-        <select id="packageKey">
-          <option value="">Nessuno</option>
-        </select>
+              <label for="quotaEVdaFV">Quota ricarica EV coperta da FV (%)</label>
+              <input id="quotaEVdaFV" type="number" placeholder="60" min="0" max="100" required />
 
-        <button id="runCalc" type="button">Calcola</button>
-      </section>
+              <label for="prezzoReteCasa">Prezzo energia casa (EUR/kWh)</label>
+              <input id="prezzoReteCasa" type="number" placeholder="0.25" min="0.01" step="0.01" required />
 
-      <section id="leadPanel" class="panel hidden" aria-label="Contatto">
-        <h2>Richiesta contatto</h2>
-        <label for="leadName">Nome</label>
-        <input id="leadName" type="text" placeholder="Mario Rossi" />
+              <label for="packageKey">Pacchetto (opzionale per rientro)</label>
+              <select id="packageKey">
+                <option value="">Nessuno</option>
+              </select>
 
-        <label for="leadEmail">Email</label>
-        <input id="leadEmail" type="email" placeholder="mario@email.it" />
+              <button id="runCalc" type="button">Calcola</button>
+            </section>
 
-        <label for="leadPhone">Telefono</label>
-        <input id="leadPhone" type="tel" placeholder="+39..." />
+            <section id="leadPanel" class="panel hidden" aria-label="Contatto">
+              <h3>Richiesta contatto</h3>
+              <label for="leadName">Nome</label>
+              <input id="leadName" type="text" placeholder="Mario Rossi" />
 
-        <label for="leadMessage">Messaggio</label>
-        <textarea id="leadMessage" rows="3" placeholder="Richiedo informazioni"></textarea>
+              <label for="leadEmail">Email</label>
+              <input id="leadEmail" type="email" placeholder="mario@email.it" />
 
-        <label class="consent">
-          <input id="leadConsent" type="checkbox" />
-          Acconsento al trattamento dati per essere ricontattato.
-        </label>
+              <label for="leadPhone">Telefono</label>
+              <input id="leadPhone" type="tel" placeholder="+39..." />
 
-        <button id="sendLead" type="button">Invia contatto</button>
-      </section>
+              <label for="leadMessage">Messaggio</label>
+              <textarea id="leadMessage" rows="3" placeholder="Richiedo informazioni"></textarea>
 
-      <form id="chatForm" class="chat-form">
-        <input id="chatInput" type="text" placeholder="Scrivi qui..." autocomplete="off" />
-        <button type="submit">Invia</button>
-      </form>
+              <label class="consent">
+                <input id="leadConsent" type="checkbox" />
+                Acconsento al trattamento dati per essere ricontattato.
+              </label>
+
+              <button id="sendLead" type="button">Invia contatto</button>
+            </section>
+
+            <form id="chatForm" class="chat-form">
+              <input id="chatInput" type="text" placeholder="Scrivi qui..." autocomplete="off" />
+              <button type="submit">Invia</button>
+            </form>
+          </div>
+        </section>
+      </div>
     </div>
 
     <script src="widget.js"></script>

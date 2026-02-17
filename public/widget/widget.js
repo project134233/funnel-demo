@@ -1,6 +1,7 @@
 (function widgetBootstrap() {
   const params = new URLSearchParams(window.location.search);
   const tenant = params.get("tenant") || "default";
+  const isEmbedded = window.parent && window.parent !== window;
 
   const state = {
     history: [],
@@ -12,6 +13,12 @@
 
   const refs = {
     appRoot: document.getElementById("appRoot"),
+    heroBrand: document.getElementById("heroBrand"),
+    heroTitle: document.getElementById("heroTitle"),
+    heroInfo: document.getElementById("heroInfo"),
+    heroPill1: document.getElementById("heroPill1"),
+    heroPill2: document.getElementById("heroPill2"),
+    heroPill3: document.getElementById("heroPill3"),
     headerTitle: document.getElementById("headerTitle"),
     headerSub: document.getElementById("headerSub"),
     messages: document.getElementById("messages"),
@@ -25,6 +32,17 @@
     runCalc: document.getElementById("runCalc"),
     sendLead: document.getElementById("sendLead")
   };
+
+  function applyLayoutMode() {
+    if (isEmbedded) {
+      document.body.classList.add("embed-mode");
+      refs.closeBtn.hidden = false;
+      return;
+    }
+
+    document.body.classList.add("standalone-mode");
+    refs.closeBtn.hidden = true;
+  }
 
   function createSessionId() {
     return `sess_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
@@ -76,8 +94,21 @@
     refs.appRoot.style.setProperty("--primary", primary);
     refs.appRoot.style.setProperty("--accent", accent);
 
-    refs.headerTitle.textContent = config?.ui?.headerTitle || "Consulente FV";
-    refs.headerSub.textContent = config?.brandName || "Simula il risparmio EV + Fotovoltaico";
+    const brandName = config?.brandName || "Consulente Fotovoltaico";
+    const widgetTitle = config?.ui?.headerTitle || "Calcolatore EV + Fotovoltaico";
+    const welcomeText =
+      config?.ui?.welcome ||
+      "Simula i risparmi EV + FV in meno di un minuto e ricevi risposte immediate sui prossimi passi.";
+
+    refs.heroBrand.textContent = brandName;
+    refs.heroTitle.textContent = widgetTitle;
+    refs.heroInfo.textContent = welcomeText;
+    refs.heroPill1.textContent = "Simulazione in 60 sec";
+    refs.heroPill2.textContent = "Risposte AI in italiano";
+    refs.heroPill3.textContent = config?.ui?.ctaLabel || "Parla con un consulente";
+
+    refs.headerTitle.textContent = brandName;
+    refs.headerSub.textContent = widgetTitle;
   }
 
   function populateOptions(config) {
@@ -230,13 +261,14 @@
     refs.sendLead.addEventListener("click", sendLead);
 
     refs.closeBtn.addEventListener("click", function () {
-      if (window.parent && window.parent !== window) {
+      if (isEmbedded) {
         window.parent.postMessage({ type: "solar-chat-close" }, "*");
       }
     });
   }
 
   async function init() {
+    applyLayoutMode();
     loadSessionId();
     bindEvents();
 

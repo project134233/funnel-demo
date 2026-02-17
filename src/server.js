@@ -333,12 +333,14 @@ app.get("/embed.js", (req, res) => {
 
 app.use("/widget", express.static(path.join(ROOT_DIR, "public", "widget")));
 app.use("/admin", express.static(path.join(ROOT_DIR, "public", "admin")));
+app.use("/demo", express.static(path.join(ROOT_DIR, "public", "demo")));
 
 app.get("/", (_req, res) => {
   res.type("html").send(`
     <h1>Solar Chat Widget</h1>
     <p>Server attivo. Endpoint embed: <code>/embed.js</code></p>
     <p>Widget: <code>/widget/index.html</code></p>
+    <p>Demo Embed (corner): <code>/demo/</code></p>
     <p>Health: <code>/health</code></p>
   `);
 });
