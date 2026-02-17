@@ -1,0 +1,11 @@
+services:
+  solar-chat:
+    build: .
+    container_name: solar-chat
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Config</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 24px;
+        background: #f7f8fb;
+        color: #1f2937;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 16px;
+        max-width: 1000px;
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      input,
+      button,
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+        padding: 8px;
+        font-size: 14px;
+      }
+      button {
+        background: #f39c12;
+        color: #fff;
+        border: 0;
+        cursor: pointer;
+      }
+      textarea {
+        min-height: 520px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      .status {
+        margin-top: 8px;
+        font-size: 13px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Admin Config Tenant</h1>
+      <p>Gestisci i JSON dei tenant. Usa il token definito in <code>.env</code>.</p>
+
+      <div class="row">
+        <input id="token" type="password" placeholder="Admin token" />
+        <input id="tenant" type="text" value="default" placeholder="Tenant ID" />
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="loadBtn" type="button">Carica Config</button>
+        <button id="saveBtn" type="button">Salva Config</button>
+      </div>
+
+      <textarea id="editor" spellcheck="false"></textarea>
+      <div class="status" id="status"></div>
+    </div>
+
+    <script>
+      const tokenEl = document.getElementById("token");
+      const tenantEl = document.getElementById("tenant");
+      const editorEl = document.getElementById("editor");
+      const statusEl = document.getElementById("status");
+
+      function setStatus(text, error) {
+        statusEl.textContent = text;
+        statusEl.style.color = error ? "#b91c1c" : "#065f46";
+      }
+
+      async function loadConfig() {
+        try {
+          const tenant = encodeURIComponent(tenantEl.value || "default");
+          const response = await fetch(`/api/admin/config?tenant=${tenant}`, {
+            headers: {
+              "x-admin-token": tokenEl.value
+            }
+          });
+
+          const payload = await response.json();
+          if (!response.ok || payload.ok === false) {
+            throw new Error(payload.error || "Errore caricamento");
+          }
+
+          editorEl.value = JSON.stringify(payload.config, null, 2);
+          setStatus("Config caricata.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      }
+
+      async function saveConfig() {
+        try {
+          const tenant = encodeURIComponent(tenantEl.value || "default");
+          const parsed = JSON.parse(editorEl.value);
+
+          const response = await fetch(`/api/admin/config?tenant=${tenant}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "x-admin-token": tokenEl.value
+            },
+            body: JSON.stringify(parsed)
+          });
+
+          const payload = await response.json();
+          if (!response.ok || payload.ok === false) {
+            throw new Error(payload.error || "Errore salvataggio");
+          }
+
+          setStatus("Config salvata.", false);
+        } catch (error) {
+          setStatus(error.message, true);
+        }
+      }
+
+      document.getElementById("loadBtn").addEventListener("click", loadConfig);
+      document.getElementById("saveBtn").addEventListener("click", saveConfig);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+{
+  "tenantId": "default",
+  "brandName": "Consulente Fotovoltaico",
+  "ui": {
+    "headerTitle": "Calcolatore EV + Fotovoltaico",
+    "welcome": "Ciao, sono il consulente energetico virtuale. Posso spiegarti i risparmi e fare la simulazione in pochi passaggi.",
+    "primaryColor": "#f39c12",
+    "accentColor": "#2c3e50",
+    "ctaLabel": "Parla con un consulente"
+  },
+  "options": {
+    "cars": {
+      "model3": { "nome": "Tesla Model 3", "batteria": "55-75 kWh", "consumo": 15.0 },
+      "id3born": { "nome": "Volkswagen ID.3 / Cupra Born", "batteria": "~62 kWh", "consumo": 14.0 },
+      "ev5": { "nome": "Kia EV5 (varianti)", "batteria": "60-88 kWh", "consumo": 16.0 },
+      "i4": { "nome": "BMW i4", "batteria": "83-84 kWh", "consumo": 19.0 },
+      "bolt": { "nome": "Chevrolet Bolt / Opel Ampera-e", "batteria": "~60 kWh", "consumo": 15.5 },
+      "smart3": { "nome": "Smart #3", "batteria": "49-66 kWh", "consumo": 17.0 },
+      "togg": { "nome": "Togg T10X", "batteria": "52-88 kWh", "consumo": 16.5 }
+    },
+    "plantOutput": {
+      "4": 4000,
+      "5": 5000,
+      "6": 6000
+    },
+    "packagePrices": {
+      "huawei": 10500,
+      "aiko": 10500,
+      "sunpower": 14500
+    }
+  },
+  "assistant": {
+    "model": "gpt-4.1-mini",
+    "temperature": 0.2,
+    "systemPrompt": "Rispondi sempre in italiano. Sei un consulente commerciale per impianti fotovoltaici con focus su ricarica auto elettrica. Usa tono chiaro, breve, orientato alla conversione. Non inventare incentivi o prezzi non presenti nei dati. Se mancano dati, chiedi una sola domanda utile."
+  },
+  "contactPrompt": "Se vuoi, posso raccogliere i tuoi contatti per farti richiamare da un consulente.",
+  "security": {
+    "allowedEmbedHosts": []
+  },
+  "integrations": {
+    "leadWebhook": ""
+  }
+}
