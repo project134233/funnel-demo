@@ -14,8 +14,6 @@
 - widget apribile da embed
 - simulazione calcolatore funzionante
 - chat AI risponde
-- lead salvato in `data/leads.ndjson`
-- webhook lead ricevuto (se configurato)
 
 4. Consegna cliente
 - snippet embed finale
@@ -25,4 +23,4 @@
 
 5. Post-consegna
 - test da dominio produzione
-- conferma eventi lead con team commerciale
+- conferma funzionamento simulazione e chat con team commerciale

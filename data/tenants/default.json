@@ -4,9 +4,10 @@
   "ui": {
     "headerTitle": "Calcolatore EV + Fotovoltaico",
     "welcome": "Ciao, sono il consulente energetico virtuale. Posso spiegarti i risparmi e fare la simulazione in pochi passaggi.",
+    "openingQuestion": "Perfetto, partiamo: quanti km percorri in un anno con la tua auto?",
     "primaryColor": "#f39c12",
     "accentColor": "#2c3e50",
-    "ctaLabel": "Parla con un consulente"
+    "ctaLabel": "Analisi personalizzata"
   },
   "options": {
     "cars": {
@@ -34,11 +35,7 @@
     "temperature": 0.2,
     "systemPrompt": "Rispondi sempre in italiano. Sei un consulente commerciale per impianti fotovoltaici con focus su ricarica auto elettrica. Usa tono chiaro, breve, orientato alla conversione. Non inventare incentivi o prezzi non presenti nei dati. Se mancano dati, chiedi una sola domanda utile."
   },
-  "contactPrompt": "Se vuoi, posso raccogliere i tuoi contatti per farti richiamare da un consulente.",
   "security": {
     "allowedEmbedHosts": []
-  },
-  "integrations": {
-    "leadWebhook": ""
   }
 }

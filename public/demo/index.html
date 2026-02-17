@@ -37,7 +37,7 @@
         line-height: 1.1;
       }
 
-      .lead {
+      .intro {
         margin-top: 10px;
         color: #475569;
         font-size: 16px;
@@ -82,6 +82,85 @@
         color: #475569;
       }
 
+      .setup {
+        margin-top: 18px;
+        border-radius: 16px;
+        padding: 16px;
+        background: #fff;
+        border: 1px solid #dbe5f4;
+        box-shadow: 0 10px 26px rgba(15, 23, 42, 0.08);
+      }
+
+      .setup h2 {
+        margin: 0;
+      }
+
+      .setup p {
+        color: #475569;
+      }
+
+      .steps {
+        margin: 12px 0 0;
+        padding-left: 18px;
+        color: #334155;
+      }
+
+      .steps li {
+        margin: 7px 0;
+      }
+
+      .code-box {
+        margin-top: 14px;
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 12px;
+        border: 1px solid #1e293b;
+        overflow: hidden;
+      }
+
+      .code-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #1e293b;
+      }
+
+      .copy-btn {
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #13203a;
+        color: #e2e8f0;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .copy-btn:hover {
+        background: #1e2d4a;
+      }
+
+      pre {
+        margin: 0;
+        padding: 12px;
+        font-size: 12px;
+        line-height: 1.45;
+        overflow-x: auto;
+      }
+
+      .inline-links {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .inline-links a {
+        font-size: 13px;
+      }
+
       a {
         color: #18427a;
       }
@@ -91,7 +170,7 @@
     <main>
       <span class="pill">Demo Embed Mode</span>
       <h1>Esempio chatbot in angolo pagina</h1>
-      <p class="lead">
+      <p class="intro">
         Questa pagina simula un sito cliente. In basso a destra vedrai il bottone flottante del chatbot.
         Cliccalo per aprire il pannello cornered come in produzione.
       </p>
@@ -100,7 +179,7 @@
         <article class="card">
           <h2>Come testare</h2>
           <p>1) Apri il bottone in basso a destra.</p>
-          <p>2) Prova <strong>Simula Risparmio</strong> e <strong>Lascia Contatto</strong>.</p>
+          <p>2) Prova <strong>Simula Risparmio</strong> e poi fai una domanda nel campo chat.</p>
         </article>
 
         <article class="card">
@@ -117,11 +196,67 @@
         </article>
       </section>
 
+      <section class="setup">
+        <h2>Setup in 2 minuti (per agenzie fotovoltaico)</h2>
+        <p>
+          Copia un solo snippet e incollalo nel sito cliente. Nessun rebuild frontend, nessuna modifica al tema.
+        </p>
+        <ol class="steps">
+          <li>Apri il sito del cliente (WordPress, Webflow, HTML custom, ecc.).</li>
+          <li>Incolla lo snippet prima di <code>&lt;/body&gt;</code> (o in un blocco HTML custom).</li>
+          <li>Pubblica: il chatbot appare in basso a destra.</li>
+        </ol>
+
+        <div class="code-box">
+          <div class="code-head">
+            <strong>Snippet pronto da incollare</strong>
+            <button id="copySnippetBtn" class="copy-btn" type="button">Copia snippet</button>
+          </div>
+          <pre id="embedSnippet"></pre>
+        </div>
+
+        <div class="inline-links">
+          <a href="/widget/index.html?tenant=default">Prova fullscreen diretto</a>
+          <a href="/admin/">Apri admin tenant</a>
+          <a href="/health">Controlla health API</a>
+        </div>
+      </section>
+
       <p class="tip">
         Nota: questa pagina non contiene il chatbot nel markup. Viene iniettato via <code>embed.js</code> come succede nei siti clienti.
       </p>
     </main>
 
+    <script>
+      (function setupDemoSnippet() {
+        const origin = window.location.origin;
+        const snippet = [
+          "<script",
+          `  src=\"${origin}/embed.js\"`,
+          "  data-tenant=\"default\"",
+          "  data-label=\"Consulente FV\"",
+          "  data-position=\"right\"",
+          "  data-primary-color=\"#f39c12\"",
+          "><\\/script>"
+        ].join("\n");
+
+        const snippetEl = document.getElementById("embedSnippet");
+        const copyBtn = document.getElementById("copySnippetBtn");
+        snippetEl.textContent = snippet;
+
+        copyBtn.addEventListener("click", async function () {
+          try {
+            await navigator.clipboard.writeText(snippet);
+            copyBtn.textContent = "Copiato";
+            window.setTimeout(function () {
+              copyBtn.textContent = "Copia snippet";
+            }, 1400);
+          } catch (_) {
+            copyBtn.textContent = "Copia manuale";
+          }
+        });
+      })();
+    </script>
     <script src="/embed.js" data-tenant="default" data-label="Consulente FV" data-position="right" data-primary-color="#f39c12"></script>
   </body>
 </html>

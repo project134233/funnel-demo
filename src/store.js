@@ -101,7 +101,6 @@ function getPublicConfig(config) {
     brandName: config.brandName,
     ui: config.ui,
     options: config.options,
-    contactPrompt: config.contactPrompt,
     security: {
       allowedEmbedHosts: config?.security?.allowedEmbedHosts || []
     }

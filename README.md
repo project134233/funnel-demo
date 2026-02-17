@@ -3,17 +3,15 @@
 Pacchetto self-hosted per aziende fotovoltaiche:
 - chat AI in italiano
 - calcolatore EV + fotovoltaico
-- raccolta lead
 - embed universale per qualsiasi CMS (WordPress, HTML custom, ecc.)
 
 ## 1) Architettura
 
-- `src/server.js`: API backend (chat, calcolo, lead, admin)
+- `src/server.js`: API backend (chat, calcolo, admin)
 - `public/embed.js`: snippet universale da incorporare nei siti clienti
 - `public/widget/*`: UI chatbot
 - `public/demo/*`: pagina demo embed per test corner launcher
 - `data/tenants/*.json`: configurazioni tenant
-- `data/leads.ndjson`: lead raccolti
 - `data/chat.ndjson`: log chat/calcoli/errori
 
 La logica del calcolatore e le chiamate AI sono lato server, non nel browser.
@@ -99,7 +97,6 @@ Puoi partire da `data/tenants/default.json` e cambiare:
 - prompt AI (`assistant.systemPrompt`)
 - listini (`options.packagePrices`)
 - host consentiti (`security.allowedEmbedHosts`)
-- webhook lead (`integrations.leadWebhook`)
 
 ## 8) Admin UI
 
@@ -112,7 +109,6 @@ Permette caricare/salvare JSON tenant via API admin (`x-admin-token`).
 - `GET /api/public/config?tenant=default`
 - `POST /api/calculate`
 - `POST /api/chat`
-- `POST /api/leads`
 - `GET /api/admin/config?tenant=default` (auth token)
 - `PUT /api/admin/config?tenant=default` (auth token)
 

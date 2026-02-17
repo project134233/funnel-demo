@@ -96,18 +96,18 @@ function enforceEmbedHost(req, tenantConfig) {
   }
 }
 
-function fallbackReply(message, calculationSummary, contactPrompt) {
+function fallbackReply(message, calculationSummary) {
   const text = String(message || "").toLowerCase();
 
   if (text.includes("prezzo") || text.includes("costo") || text.includes("preventivo")) {
-    return `Posso aiutarti a stimare il rientro economico in base ai tuoi dati reali. ${contactPrompt}`;
+    return "Posso aiutarti a stimare il rientro economico in base ai tuoi dati reali.";
   }
 
   if (calculationSummary) {
     return `Ho elaborato la simulazione.\n${calculationSummary}\nSe vuoi, posso anche preparare una sintesi pronta da inviare al consulente.`;
   }
 
-  return "Posso aiutarti con 3 cose: simulazione risparmio EV+FV, anni di rientro, e raccolta contatto per consulenza.";
+  return "Posso aiutarti con simulazione risparmio EV+FV e anni di rientro.";
 }
 
 function adminGuard(req, res, next) {
@@ -198,7 +198,7 @@ app.post("/api/chat", async (req, res) => {
     const systemPrompt = [
       String(config?.assistant?.systemPrompt || "Rispondi in italiano."),
       "Se citi numeri economici, usa solo dati noti dalla simulazione.",
-      "Concludi spesso con invito breve alla conversione (contatto/consulenza)."
+      "Concludi spesso con un invito breve a completare la simulazione."
     ].join(" ");
 
     const userContext = calculationSummary
@@ -224,7 +224,7 @@ app.post("/api/chat", async (req, res) => {
         });
         source = "openai";
       } catch (err) {
-        reply = fallbackReply(message, calculationSummary, config.contactPrompt);
+        reply = fallbackReply(message, calculationSummary);
         appendNdjson("chat.ndjson", {
           type: "chat_error",
           tenantId,
@@ -233,7 +233,7 @@ app.post("/api/chat", async (req, res) => {
         });
       }
     } else {
-      reply = fallbackReply(message, calculationSummary, config.contactPrompt);
+      reply = fallbackReply(message, calculationSummary);
     }
 
     appendNdjson("chat.ndjson", {
@@ -246,62 +246,6 @@ app.post("/api/chat", async (req, res) => {
     });
 
     res.json({ ok: true, reply, source, model });
-  } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
-  }
-});
-
-app.post("/api/leads", async (req, res) => {
-  try {
-    const tenantId = safeTenantId(req.body.tenant || "default");
-    const config = loadTenantConfig(tenantId);
-    enforceEmbedHost(req, config);
-
-    const name = String(req.body.name || "").trim();
-    const email = String(req.body.email || "").trim();
-    const phone = String(req.body.phone || "").trim();
-
-    if (!name || (!email && !phone)) {
-      res.status(400).json({
-        ok: false,
-        error: "Inserisci almeno nome e un contatto (email o telefono)."
-      });
-      return;
-    }
-
-    const payload = {
-      tenantId,
-      sessionId: req.body.sessionId || null,
-      name,
-      email,
-      phone,
-      message: String(req.body.message || "").trim(),
-      consent: Boolean(req.body.consent)
-    };
-
-    appendNdjson("leads.ndjson", payload);
-
-    const webhook = String(config?.integrations?.leadWebhook || "").trim();
-    if (webhook) {
-      try {
-        await fetch(webhook, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            at: new Date().toISOString(),
-            ...payload
-          })
-        });
-      } catch (err) {
-        appendNdjson("chat.ndjson", {
-          type: "lead_webhook_error",
-          tenantId,
-          error: err.message
-        });
-      }
-    }
-
-    res.json({ ok: true });
   } catch (error) {
     res.status(400).json({ ok: false, error: error.message });
   }

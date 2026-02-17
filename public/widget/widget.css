@@ -299,18 +299,6 @@ body {
   box-shadow: 0 10px 18px rgba(217, 125, 0, 0.24);
 }
 
-.consent {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
-  font-size: 12px;
-}
-
-.consent input {
-  width: auto;
-  margin-top: 2px;
-}
-
 .chat-form {
   display: grid;
   grid-template-columns: 1fr auto;

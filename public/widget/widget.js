@@ -17,7 +17,6 @@
     heroTitle: document.getElementById("heroTitle"),
     heroInfo: document.getElementById("heroInfo"),
     heroPill1: document.getElementById("heroPill1"),
-    heroPill2: document.getElementById("heroPill2"),
     heroPill3: document.getElementById("heroPill3"),
     headerTitle: document.getElementById("headerTitle"),
     headerSub: document.getElementById("headerSub"),
@@ -26,11 +25,8 @@
     chatInput: document.getElementById("chatInput"),
     closeBtn: document.getElementById("closeBtn"),
     toggleCalc: document.getElementById("toggleCalc"),
-    toggleLead: document.getElementById("toggleLead"),
     calcPanel: document.getElementById("calcPanel"),
-    leadPanel: document.getElementById("leadPanel"),
-    runCalc: document.getElementById("runCalc"),
-    sendLead: document.getElementById("sendLead")
+    runCalc: document.getElementById("runCalc")
   };
 
   function applyLayoutMode() {
@@ -104,8 +100,7 @@
     refs.heroTitle.textContent = widgetTitle;
     refs.heroInfo.textContent = welcomeText;
     refs.heroPill1.textContent = "Simulazione in 60 sec";
-    refs.heroPill2.textContent = "Risposte AI in italiano";
-    refs.heroPill3.textContent = config?.ui?.ctaLabel || "Parla con un consulente";
+    refs.heroPill3.textContent = config?.ui?.ctaLabel || "Analisi personalizzata";
 
     refs.headerTitle.textContent = brandName;
     refs.headerSub.textContent = widgetTitle;
@@ -148,15 +143,6 @@
   function togglePanel(panel, forceState) {
     const isOpen = !panel.classList.contains("hidden");
     const shouldOpen = typeof forceState === "boolean" ? forceState : !isOpen;
-
-    if (panel === refs.calcPanel && shouldOpen) {
-      refs.leadPanel.classList.add("hidden");
-    }
-
-    if (panel === refs.leadPanel && shouldOpen) {
-      refs.calcPanel.classList.add("hidden");
-    }
-
     panel.classList.toggle("hidden", !shouldOpen);
   }
 
@@ -215,29 +201,6 @@
     }
   }
 
-  async function sendLead() {
-    const payload = {
-      tenant,
-      sessionId: state.sessionId,
-      name: document.getElementById("leadName").value,
-      email: document.getElementById("leadEmail").value,
-      phone: document.getElementById("leadPhone").value,
-      message: document.getElementById("leadMessage").value,
-      consent: document.getElementById("leadConsent").checked
-    };
-
-    try {
-      await api("leads", {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      addMessage("bot", "Contatto inviato. Un consulente ti richiamera al piu presto.");
-      togglePanel(refs.leadPanel, false);
-    } catch (error) {
-      addMessage("bot", `Errore invio contatto: ${error.message}`);
-    }
-  }
-
   function bindEvents() {
     refs.chatForm.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -253,12 +216,7 @@
       togglePanel(refs.calcPanel);
     });
 
-    refs.toggleLead.addEventListener("click", function () {
-      togglePanel(refs.leadPanel);
-    });
-
     refs.runCalc.addEventListener("click", runCalculation);
-    refs.sendLead.addEventListener("click", sendLead);
 
     refs.closeBtn.addEventListener("click", function () {
       if (isEmbedded) {
@@ -277,7 +235,10 @@
       state.config = response.config;
       setTheme(response.config);
       populateOptions(response.config);
-      addMessage("bot", response.config?.ui?.welcome || "Ciao, come posso aiutarti?");
+      const openingQuestion =
+        response.config?.ui?.openingQuestion ||
+        "Perfetto, partiamo: quanti km percorri in un anno con la tua auto?";
+      addMessage("bot", openingQuestion);
     } catch (error) {
       addMessage("bot", `Errore configurazione tenant: ${error.message}`);
     }
