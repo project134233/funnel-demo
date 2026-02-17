@@ -7,21 +7,29 @@ Pacchetto self-hosted per aziende fotovoltaiche:
 
 ## 1) Architettura
 
-- `src/server.js`: API backend (chat, calcolo, admin)
+- `src/server.js`: API backend (chat + calcolo)
 - `public/embed.js`: snippet universale da incorporare nei siti clienti
 - `public/widget/*`: UI chatbot
 - `public/demo/*`: pagina demo embed per test corner launcher
-- `data/tenants/*.json`: configurazioni tenant
+- `data/tenants/default.json`: configurazione hardcoded del chatbot
 - `data/chat.ndjson`: log chat/calcoli/errori
 
 La logica del calcolatore e le chiamate AI sono lato server, non nel browser.
 
-## 2) Requisiti
+## 2) Config hardcoded (senza admin)
+
+Questa versione non ha pannello admin e non espone endpoint di modifica config a runtime.
+
+Per cambiare testi, colori, prezzi, modelli auto o prompt AI:
+1. modifica `data/tenants/default.json`
+2. ridistribuisci/redeploya il servizio
+
+## 3) Requisiti
 
 - Node.js 20+
 - opzionale: Docker + Docker Compose
 
-## 3) Avvio locale
+## 4) Avvio locale
 
 ```bash
 cp .env.example .env
@@ -35,9 +43,8 @@ Link utili in locale:
 - `http://localhost:3000/health`
 - `http://localhost:3000/widget/index.html?tenant=default` (fullscreen direct page)
 - `http://localhost:3000/demo/` (corner embed demo)
-- `http://localhost:3000/admin/`
 
-## 4) Configurazione `.env`
+## 5) Configurazione `.env`
 
 ```env
 PORT=3000
@@ -45,16 +52,13 @@ BASE_URL=http://localhost:3000
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 ALLOWED_ORIGINS=*
-ADMIN_TOKEN=change-me
 ```
 
 Note:
 - se `OPENAI_API_KEY` e' vuota, la chat usa fallback locale (no AI cloud)
-- `ADMIN_TOKEN` protegge endpoint admin
+- in produzione evita `ALLOWED_ORIGINS=*` e usa domini espliciti
 
-## 5) Modalita UI
-
-Il progetto ora ha due modalita principali:
+## 6) Modalita UI
 
 - Direct/fullscreen page: `https://TUO-DOMINIO/widget/index.html?tenant=default`
   - chatbot centrato
@@ -68,7 +72,7 @@ Il progetto ora ha due modalita principali:
 Pagina demo embed (simula sito cliente):
 - `https://TUO-DOMINIO/demo/`
 
-## 6) Embed sul sito cliente
+## 7) Embed sul sito cliente
 
 Incollare prima di `</body>`:
 
@@ -83,36 +87,18 @@ Incollare prima di `</body>`:
 ```
 
 Attributi disponibili:
-- `data-tenant`: id tenant (`default`, `cliente1`, ...)
+- `data-tenant`: mantiene compatibilita' ma questa build usa config hardcoded `default`
 - `data-label`: testo bottone floating
 - `data-position`: `right` o `left`
 - `data-primary-color`: colore bottone
 
-## 7) Multi-tenant
+## 8) API principali
 
-Creare file tenant, esempio `data/tenants/cliente1.json`.
-
-Puoi partire da `data/tenants/default.json` e cambiare:
-- branding (`brandName`, `ui`)
-- prompt AI (`assistant.systemPrompt`)
-- listini (`options.packagePrices`)
-- host consentiti (`security.allowedEmbedHosts`)
-
-## 8) Admin UI
-
-Pagina: `https://TUO-DOMINIO/admin/`
-
-Permette caricare/salvare JSON tenant via API admin (`x-admin-token`).
-
-## 9) API principali
-
-- `GET /api/public/config?tenant=default`
+- `GET /api/public/config`
 - `POST /api/calculate`
 - `POST /api/chat`
-- `GET /api/admin/config?tenant=default` (auth token)
-- `PUT /api/admin/config?tenant=default` (auth token)
 
-## 10) Docker
+## 9) Docker
 
 ```bash
 cp .env.example .env
@@ -121,24 +107,9 @@ docker compose up -d --build
 
 Servizio: `solar-chat`, porta `3000`.
 
-## 11) Primo deploy con volume persistente
-
-Se monti un volume vuoto su `/app/data`, inizializza il tenant `default` una volta:
-
-```bash
-curl -X PUT "https://TUO-DOMINIO/api/admin/config?tenant=default&token=ADMIN_TOKEN" \
-  -H "Content-Type: application/json" \
-  --data-binary @data/tenants/default.json
-```
-
-Verifica:
-- `https://TUO-DOMINIO/health`
-- `https://TUO-DOMINIO/widget/index.html?tenant=default`
-- `https://TUO-DOMINIO/demo/`
-
-## 12) Sicurezza e protezione IP
+## 10) Sicurezza e protezione IP
 
 - le API key restano lato server
-- usa `security.allowedEmbedHosts` per limitare i domini autorizzati
+- usa `security.allowedEmbedHosts` in `data/tenants/default.json` per limitare i domini autorizzati
 - distribuisci solo build/package operativo al cliente
 - proteggi legalmente con contratto/licenza (tecnicamente la copia non puo' essere azzerata al 100%)

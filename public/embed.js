@@ -35,6 +35,7 @@
       padding: 12px 16px;
       cursor: pointer;
       box-shadow: 0 10px 24px rgba(0,0,0,0.2);
+      transition: opacity 0.18s ease, transform 0.18s ease;
     }
     .solar-chat-panel {
       position: fixed;
@@ -71,6 +72,11 @@
         ${position}: 16px;
         bottom: 16px;
       }
+      .solar-chat-launcher.is-hidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+      }
     }
   `;
 
@@ -97,6 +103,8 @@
     const shouldOpen = typeof forceOpen === "boolean" ? forceOpen : !panel.classList.contains("open");
     panel.classList.toggle("open", shouldOpen);
     launcher.textContent = shouldOpen ? "Chiudi" : buttonLabel;
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
+    launcher.classList.toggle("is-hidden", shouldOpen && isMobile);
   }
 
   launcher.addEventListener("click", function () {

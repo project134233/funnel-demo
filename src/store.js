@@ -77,14 +77,6 @@ function loadTenantConfig(tenantId = "default") {
   return deepMerge({ ...baseConfig, tenantId: id }, customConfig);
 }
 
-function saveTenantConfig(tenantId, config) {
-  ensureDirs();
-  const id = safeTenantId(tenantId);
-  const fullConfig = { ...config, tenantId: id };
-  fs.writeFileSync(tenantPath(id), JSON.stringify(fullConfig, null, 2));
-  return fullConfig;
-}
-
 function appendNdjson(fileName, payload) {
   ensureDirs();
   const targetPath = path.join(DATA_DIR, fileName);
@@ -111,7 +103,6 @@ module.exports = {
   ensureDirs,
   safeTenantId,
   loadTenantConfig,
-  saveTenantConfig,
   appendNdjson,
   getPublicConfig
 };

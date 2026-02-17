@@ -5,21 +5,20 @@
 - Dominio/subdominio dedicato (es. `chat.cliente.it`)
 
 2. Configurazione
-- `.env` compilato (`OPENAI_API_KEY`, `ADMIN_TOKEN`)
-- `data/tenants/default.json` personalizzato
+- `.env` compilato (`OPENAI_API_KEY`, `ALLOWED_ORIGINS`)
+- `data/tenants/default.json` personalizzato (testi, prezzi, prompt, host)
 - `security.allowedEmbedHosts` impostato con domini reali
 
 3. Verifiche funzionali
 - `/health` risponde
-- widget apribile da embed
+- widget apribile da embed (`/demo/`)
 - simulazione calcolatore funzionante
 - chat AI risponde
 
 4. Consegna cliente
 - snippet embed finale
-- credenziali admin/token
 - procedura backup cartella `data/`
-- mini training su modifica testi/prompt/listino
+- mini training su modifica file `data/tenants/default.json` + redeploy
 
 5. Post-consegna
 - test da dominio produzione

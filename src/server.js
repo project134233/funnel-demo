@@ -13,19 +13,17 @@ const {
 } = require("./calculator");
 const {
   ensureDirs,
-  safeTenantId,
   loadTenantConfig,
-  saveTenantConfig,
   appendNdjson,
   getPublicConfig
 } = require("./store");
 
 const app = express();
 const ROOT_DIR = path.resolve(__dirname, "..");
+const CONFIG_TENANT_ID = "default";
 
 const PORT = Number(process.env.PORT || 3000);
 const OPENAI_MODEL = process.env.OPENAI_MODEL || "gpt-4.1-mini";
-const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "";
 
 ensureDirs();
 
@@ -110,25 +108,13 @@ function fallbackReply(message, calculationSummary) {
   return "Posso aiutarti con simulazione risparmio EV+FV e anni di rientro.";
 }
 
-function adminGuard(req, res, next) {
-  const token = req.headers["x-admin-token"] || req.query.token;
-
-  if (!ADMIN_TOKEN || token !== ADMIN_TOKEN) {
-    res.status(401).json({ ok: false, error: "Token admin non valido." });
-    return;
-  }
-
-  next();
-}
-
 app.get("/health", (_req, res) => {
   res.json({ ok: true, at: new Date().toISOString() });
 });
 
 app.get("/api/public/config", (req, res) => {
   try {
-    const tenantId = safeTenantId(req.query.tenant || "default");
-    const config = loadTenantConfig(tenantId);
+    const config = loadTenantConfig(CONFIG_TENANT_ID);
 
     res.json({ ok: true, config: getPublicConfig(config) });
   } catch (error) {
@@ -138,8 +124,8 @@ app.get("/api/public/config", (req, res) => {
 
 app.post("/api/calculate", (req, res) => {
   try {
-    const tenantId = safeTenantId(req.body.tenant || "default");
-    const config = loadTenantConfig(tenantId);
+    const tenantId = CONFIG_TENANT_ID;
+    const config = loadTenantConfig(CONFIG_TENANT_ID);
     enforceEmbedHost(req, config);
 
     const calculation = calculateEV(req.body, config.options);
@@ -169,8 +155,8 @@ app.post("/api/calculate", (req, res) => {
 
 app.post("/api/chat", async (req, res) => {
   try {
-    const tenantId = safeTenantId(req.body.tenant || "default");
-    const config = loadTenantConfig(tenantId);
+    const tenantId = CONFIG_TENANT_ID;
+    const config = loadTenantConfig(CONFIG_TENANT_ID);
     enforceEmbedHost(req, config);
 
     const message = String(req.body.message || "").trim();
@@ -251,32 +237,11 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-app.get("/api/admin/config", adminGuard, (req, res) => {
-  try {
-    const tenantId = safeTenantId(req.query.tenant || "default");
-    const config = loadTenantConfig(tenantId);
-    res.json({ ok: true, config });
-  } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
-  }
-});
-
-app.put("/api/admin/config", adminGuard, (req, res) => {
-  try {
-    const tenantId = safeTenantId(req.query.tenant || req.body.tenantId || "default");
-    const saved = saveTenantConfig(tenantId, req.body);
-    res.json({ ok: true, config: saved });
-  } catch (error) {
-    res.status(400).json({ ok: false, error: error.message });
-  }
-});
-
 app.get("/embed.js", (req, res) => {
   res.sendFile(path.join(ROOT_DIR, "public", "embed.js"));
 });
 
 app.use("/widget", express.static(path.join(ROOT_DIR, "public", "widget")));
-app.use("/admin", express.static(path.join(ROOT_DIR, "public", "admin")));
 app.use("/demo", express.static(path.join(ROOT_DIR, "public", "demo")));
 
 app.get("/", (_req, res) => {
